@@ -1,5 +1,6 @@
 package com.derteuffel.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -23,7 +24,4 @@ public class Boisson implements Serializable {
     private String model;
     private int quantite;
     private int price;
-
-    @OneToMany(mappedBy = "boisson")
-    private List<AjoutBoisson> ajoutBoissons;
 }

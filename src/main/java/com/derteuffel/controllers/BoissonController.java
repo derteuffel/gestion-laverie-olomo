@@ -1,8 +1,8 @@
 package com.derteuffel.controllers;
 
-import com.derteuffel.entities.AjoutBoisson;
+import com.derteuffel.entities.Ajout;
 import com.derteuffel.entities.Boisson;
-import com.derteuffel.repositories.AjoutBoissonRepository;
+import com.derteuffel.repositories.AjoutRepository;
 import com.derteuffel.repositories.BoissonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class BoissonController {
     private BoissonRepository boissonRepository;
 
     @Autowired
-    private AjoutBoissonRepository ajoutBoissonRepository;
+    private AjoutRepository ajoutRepository;
 
 
     @GetMapping("/boissons")
@@ -56,12 +56,12 @@ public class BoissonController {
     public ResponseEntity<Boisson> postBoisson(@RequestBody Boisson boisson){
         Boisson boisson1 = boissonRepository.findByNameAndModel(boisson.getName().toUpperCase(), boisson.getModel());
         if (boisson1 != null){
-            AjoutBoisson ajoutBoisson = new AjoutBoisson();
-            ajoutBoisson.setName(boisson.getName().toUpperCase());
-            ajoutBoisson.setQuantite(boisson.getNbreCasier());
-            ajoutBoisson.setComment("Ajout d'un stock de "+boisson.getName() + " existante");
-            ajoutBoissonRepository.save(ajoutBoisson);
-            boisson1.setNbreCasier(boisson1.getNbreCasier()+ajoutBoisson.getQuantite());
+            Ajout ajout = new Ajout();
+            ajout.setName(boisson.getName().toUpperCase());
+            ajout.setQuantite(boisson.getNbreCasier());
+            ajout.setComment("Ajout d'un stock de "+boisson.getName() + " existante");
+            ajoutRepository.save(ajout);
+            boisson1.setNbreCasier(boisson1.getNbreCasier()+ajout.getQuantite());
             if (boisson1.getModel() == "PETIT"){
                 boisson1.setQuantite((int) (boisson1.getNbreCasier()*24));
             }else {

@@ -1,8 +1,8 @@
 package com.derteuffel.controllers;
 
-import com.derteuffel.entities.AjoutBoisson;
+import com.derteuffel.entities.Ajout;
 import com.derteuffel.entities.Boisson;
-import com.derteuffel.repositories.AjoutBoissonRepository;
+import com.derteuffel.repositories.AjoutRepository;
 import com.derteuffel.repositories.BoissonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,17 +16,17 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
-public class AjoutBoissonController {
+public class AjoutController {
 
     @Autowired
-    private AjoutBoissonRepository boissonRepository;
+    private AjoutRepository boissonRepository;
 
     @Autowired
     private BoissonRepository boissonRepository1;
 
     @GetMapping("/ajouts")
-    public ResponseEntity<List<AjoutBoisson>> getAllAjoutBoissons(){
-        List<AjoutBoisson> boissons = new ArrayList<>();
+    public ResponseEntity<List<Ajout>> getAllAjoutBoissons(){
+        List<Ajout> boissons = new ArrayList<>();
 
         try {
             boissonRepository.findAll().forEach(boissons :: add);
@@ -37,16 +37,16 @@ public class AjoutBoissonController {
             return new ResponseEntity<>(boissons,HttpStatus.OK);
         } catch (Exception e) {
             System.out.println("present");
-            return new ResponseEntity<>((List<AjoutBoisson>) null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>((List<Ajout>) null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
     }
 
     @GetMapping("/ajouts/{id}")
-    public ResponseEntity<AjoutBoisson> getOne(@PathVariable Long id){
+    public ResponseEntity<Ajout> getOne(@PathVariable Long id){
 
-        Optional<AjoutBoisson> boisson = boissonRepository.findById(id);
+        Optional<Ajout> boisson = boissonRepository.findById(id);
         if (boisson.isPresent()){
             return new ResponseEntity<>(boisson.get(), HttpStatus.OK);
         }else {
@@ -56,13 +56,13 @@ public class AjoutBoissonController {
     }
 
     @PostMapping("/ajouts/{id}")
-    public ResponseEntity<AjoutBoisson> postBoisson(@RequestBody AjoutBoisson ajoutBoisson, @PathVariable Long id){
+    public ResponseEntity<Ajout> postBoisson(@RequestBody Ajout ajout, @PathVariable Long id){
         Boisson boisson = boissonRepository1.getOne(id);
         try {
             if (boisson != null) {
-                ajoutBoisson.setBoisson(boisson);
-                ajoutBoisson.setName(boisson.getName());
-                boisson.setNbreCasier((boisson.getNbreCasier() + ajoutBoisson.getQuantite()));
+                ajout.setBoisson(boisson);
+                ajout.setName(boisson.getName());
+                boisson.setNbreCasier((boisson.getNbreCasier() + ajout.getQuantite()));
                 if (boisson.getModel() == "PETIT"){
                     boisson.setQuantite((int) (boisson.getNbreCasier() * 24));
                 }else {
@@ -70,11 +70,11 @@ public class AjoutBoissonController {
                 }
                 boissonRepository1.save(boisson);
             }
-                AjoutBoisson _boisson = boissonRepository.save(ajoutBoisson);
+                Ajout _boisson = boissonRepository.save(ajout);
 
             return new ResponseEntity<>(_boisson, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>((AjoutBoisson) null, HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>((Ajout) null, HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -83,7 +83,6 @@ public class AjoutBoissonController {
     public ResponseEntity<HttpStatus> deleteBoisson(@PathVariable Long id){
 
         Boisson boisson = boissonRepository1.getOne(boissonRepository.getOne(id).getBoisson().getId());
-        boisson.getAjoutBoissons().remove(boissonRepository.getOne(id));
         boissonRepository1.save(boisson);
         try {
             boissonRepository.deleteById(id);
@@ -104,11 +103,12 @@ public class AjoutBoissonController {
     }
 
     @GetMapping("/ajouts/boisson/{id}")
-    public ResponseEntity<List<AjoutBoisson>> getAllByBoisson(@PathVariable Long id){
+    public ResponseEntity<List<Ajout>> getAllByBoisson(@PathVariable Long id){
 
         try {
-            List<AjoutBoisson> boissons = boissonRepository.findAllByBoisson_Id(id);
+            List<Ajout> boissons = boissonRepository.findAllByBoisson_Id(id);
             System.out.println(boissons);
+            System.out.println("je suis la");
 
             if (boissons.isEmpty()){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -121,10 +121,10 @@ public class AjoutBoissonController {
     }
 
     @GetMapping("/ajouts/name/{name}")
-    public ResponseEntity<List<AjoutBoisson>> getAllByName(@PathVariable String name){
+    public ResponseEntity<List<Ajout>> getAllByName(@PathVariable String name){
 
         try {
-            List<AjoutBoisson> boissons = boissonRepository.findAllByName(name);
+            List<Ajout> boissons = boissonRepository.findAllByName(name);
 
             if (boissons.isEmpty()){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -138,15 +138,15 @@ public class AjoutBoissonController {
 
 
     @PutMapping("/ajouts/{id}")
-    public ResponseEntity<AjoutBoisson> update(@PathVariable Long id, @RequestBody AjoutBoisson boisson){
-        Optional<AjoutBoisson> boisson1 = boissonRepository.findById(id);
+    public ResponseEntity<Ajout> update(@PathVariable Long id, @RequestBody Ajout ajout){
+        Optional<Ajout> boisson1 = boissonRepository.findById(id);
         if (boisson1.isPresent()){
-            AjoutBoisson _boisson = boisson1.get();
+            Ajout _boisson = boisson1.get();
             Boisson boisson2 = boissonRepository1.getOne(_boisson.getBoisson().getId());
 
-            _boisson.setComment(boisson.getComment());
-           _boisson.setName(boisson.getName());
-           _boisson.setQuantite(boisson.getQuantite());
+            _boisson.setComment(ajout.getComment());
+           _boisson.setName(ajout.getName());
+           _boisson.setQuantite(ajout.getQuantite());
 
            boisson2.setQuantite((int) (boisson2.getQuantite() + _boisson.getQuantite()));
            boissonRepository1.save(boisson2);
