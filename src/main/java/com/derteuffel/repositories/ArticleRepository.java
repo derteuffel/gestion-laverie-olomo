@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
-   // List<Article> findAllByConso_Id(Long id);
+    List<Article> findAllByBar_Id(Long id);
+    Article findByNameAndModel(String name, String model);
 }

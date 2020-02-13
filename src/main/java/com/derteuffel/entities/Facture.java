@@ -16,7 +16,7 @@ public class Facture implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
-    private Date dateJour = new Date();
+    private String dateJour;
     private String titreFacture;
     private int montantTotal;
     private int montantVerser;

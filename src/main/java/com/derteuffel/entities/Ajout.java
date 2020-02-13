@@ -23,9 +23,8 @@ public class Ajout implements Serializable {
 
     private String name;
 
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonFormat(pattern="dd/MM/yyyy hh:mm")
-    private Date dateJour = new Date();
+
+    private String dateJour;
 
     private String comment;
 

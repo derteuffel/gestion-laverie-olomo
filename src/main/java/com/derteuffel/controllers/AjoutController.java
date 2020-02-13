@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -58,10 +58,14 @@ public class AjoutController {
     @PostMapping("/ajouts/{id}")
     public ResponseEntity<Ajout> postBoisson(@RequestBody Ajout ajout, @PathVariable Long id){
         Boisson boisson = boissonRepository1.getOne(id);
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String strDate = dateFormat.format(date);
         try {
             if (boisson != null) {
                 ajout.setBoisson(boisson);
                 ajout.setName(boisson.getName());
+                ajout.setDateJour(strDate);
                 boisson.setNbreCasier((boisson.getNbreCasier() + ajout.getQuantite()));
                 if (boisson.getModel() == "PETIT"){
                     boisson.setQuantite((int) (boisson.getNbreCasier() * 24));
@@ -140,6 +144,9 @@ public class AjoutController {
     @PutMapping("/ajouts/{id}")
     public ResponseEntity<Ajout> update(@PathVariable Long id, @RequestBody Ajout ajout){
         Optional<Ajout> boisson1 = boissonRepository.findById(id);
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String strDate = dateFormat.format(date);
         if (boisson1.isPresent()){
             Ajout _boisson = boisson1.get();
             Boisson boisson2 = boissonRepository1.getOne(_boisson.getBoisson().getId());
@@ -147,6 +154,7 @@ public class AjoutController {
             _boisson.setComment(ajout.getComment());
            _boisson.setName(ajout.getName());
            _boisson.setQuantite(ajout.getQuantite());
+           _boisson.setDateJour(strDate);
 
            boisson2.setQuantite((int) (boisson2.getQuantite() + _boisson.getQuantite()));
            boissonRepository1.save(boisson2);

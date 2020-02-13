@@ -11,7 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/articles")
 public class ArticleController {
 
@@ -24,17 +28,42 @@ public class ArticleController {
     @Autowired
     private BoissonRepository boissonRepository;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Article>> findAllbyBar(@PathVariable Long id) {
+        List<Article> articles = new ArrayList<>();
+
+        try {
+            articleRepository.findAllByBar_Id(id).forEach(articles:: add);
+            if (articles.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(articles,HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>((List<Article>) null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/{id}")
     public ResponseEntity<Article> save(@RequestBody Article article, @PathVariable Long id){
 
         Bar bar = barRepository.getOne(id);
         Boisson boisson = boissonRepository.findByNameAndModel(article.getName().toUpperCase(),article.getModel());
+        Article artcle = articleRepository.findByNameAndModel(article.getName(),article.getModel());
+
         try{
-            article.setBar(bar);
-            article.setPrixU(boisson.getPrice());
-            article.setPrixT(article.getQuantite() * boisson.getPrice());
-            boisson.setQuantite(boisson.getQuantite() - article.getQuantite());
-            bar.setMontantTotal(bar.getMontantTotal()+article.getPrixT());
+            if (artcle != null){
+                artcle.setQuantite(artcle.getQuantite() + article.getQuantite());
+                artcle.setPrixT(artcle.getQuantite() * artcle.getPrixU());
+                boisson.setQuantite(boisson.getQuantite() - artcle.getQuantite());
+                bar.setMontantTotal(bar.getMontantTotal() + artcle.getPrixT());
+            }else {
+                article.setBar(bar);
+                article.setPrixU(boisson.getPrice());
+                article.setPrixT(article.getQuantite() * boisson.getPrice());
+                boisson.setQuantite(boisson.getQuantite() - article.getQuantite());
+                bar.setMontantTotal(bar.getMontantTotal() + article.getPrixT());
+            }
+
             barRepository.save(bar);
             if (boisson.getModel() == "PETIT"){
                 boisson.setNbreCasier(boisson.getQuantite() / 24);

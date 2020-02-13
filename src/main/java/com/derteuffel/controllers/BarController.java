@@ -7,9 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/bars")
@@ -69,10 +69,14 @@ public class BarController {
     @PostMapping("")
     public ResponseEntity<Bar>  save(@RequestBody Bar bar) {
 
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String strDate = dateFormat.format(date);
         try {
             bar.setNumTable(bar.getNumTable().toUpperCase());
-            bar.setTitreFacture(bar.getTitreFacture().toUpperCase());
+            bar.setTitreFacture(("CONSOMATION BAR").toUpperCase());
             bar.setNumeroFacture(barRepository.findAll().size()+1);
+            bar.setDateJour(strDate);
             Bar _bar = barRepository.save(bar);
             return new ResponseEntity<>(_bar, HttpStatus.CREATED);
         }catch (Exception e){
