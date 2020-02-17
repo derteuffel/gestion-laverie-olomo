@@ -55,7 +55,7 @@ public class ArticleController {
                 artcle.setQuantite(artcle.getQuantite() + article.getQuantite());
                 artcle.setPrixT(artcle.getQuantite() * artcle.getPrixU());
                 boisson.setQuantite(boisson.getQuantite() - artcle.getQuantite());
-                bar.setMontantTotal(bar.getMontantTotal() + artcle.getPrixT());
+                bar.setMontantTotal(bar.getMontantTotal() + artcle.getPrixU());
             }else {
                 article.setBar(bar);
                 article.setPrixU(boisson.getPrice());

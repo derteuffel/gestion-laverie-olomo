@@ -24,4 +24,5 @@ public class Boisson implements Serializable {
     private String model;
     private int quantite;
     private int price;
+    private String picture;
 }

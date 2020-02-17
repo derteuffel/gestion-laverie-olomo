@@ -4,11 +4,14 @@ import com.derteuffel.entities.Ajout;
 import com.derteuffel.entities.Boisson;
 import com.derteuffel.repositories.AjoutRepository;
 import com.derteuffel.repositories.BoissonRepository;
+import com.derteuffel.uploads.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +26,13 @@ public class BoissonController {
 
     @Autowired
     private AjoutRepository ajoutRepository;
+
+    private final FileService fileService;
+
+    @Autowired
+    public BoissonController(FileService fileService) {
+        this.fileService = fileService;
+    }
 
 
     @GetMapping("/boissons")
@@ -53,7 +63,8 @@ public class BoissonController {
     }
 
     @PostMapping("/boissons")
-    public ResponseEntity<Boisson> postBoisson(@RequestBody Boisson boisson){
+    public ResponseEntity<Boisson> postBoisson(@RequestBody Boisson boisson, @RequestParam("file") MultipartFile file) throws IOException {
+        fileService.storeFile(file);
         Boisson boisson1 = boissonRepository.findByNameAndModel(boisson.getName().toUpperCase(), boisson.getModel());
         if (boisson1 != null){
             Ajout ajout = new Ajout();
@@ -150,7 +161,11 @@ public class BoissonController {
             _boisson.setPrice(boisson.getPrice());
             _boisson.setModel(boisson.getModel());
             _boisson.setNbreCasier(boisson.getNbreCasier());
-            _boisson.setQuantite(boisson.getQuantite());
+            if (boisson.getModel() == "PETIT"){
+                _boisson.setQuantite((int) (boisson.getNbreCasier()*24));
+            }else {
+                _boisson.setQuantite(boisson.getQuantite()*12);
+            }
             _boisson.setType(boisson.getType().toUpperCase());
 
             return new ResponseEntity<>(boissonRepository.save(_boisson),HttpStatus.OK);
