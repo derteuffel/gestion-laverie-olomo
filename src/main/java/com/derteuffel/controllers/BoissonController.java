@@ -164,7 +164,7 @@ public class BoissonController {
             if (boisson.getModel() == "PETIT"){
                 _boisson.setQuantite((int) (boisson.getNbreCasier()*24));
             }else {
-                _boisson.setQuantite(boisson.getQuantite()*12);
+                _boisson.setQuantite((int)boisson.getNbreCasier()*12);
             }
             _boisson.setType(boisson.getType().toUpperCase());
 
