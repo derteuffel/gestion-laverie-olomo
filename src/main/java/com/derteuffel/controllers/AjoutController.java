@@ -67,7 +67,7 @@ public class AjoutController {
                 ajout.setName(boisson.getName());
                 ajout.setDateJour(strDate);
                 boisson.setNbreCasier((boisson.getNbreCasier() + ajout.getQuantite()));
-                if (boisson.getModel() == "PETIT"){
+                if (boisson.getModel().equals("PETIT")){
                     boisson.setQuantite((int) (boisson.getNbreCasier() * 24));
                 }else {
                     boisson.setQuantite((int) (boisson.getNbreCasier() * 12));
