@@ -72,7 +72,7 @@ public class BoissonController {
             ajout.setComment("Ajout d'un stock de "+boisson.getName() + " existante");
             ajoutRepository.save(ajout);
             boisson1.setNbreCasier(boisson1.getNbreCasier()+ajout.getQuantite());
-            if (boisson1.getModel() == "PETIT"){
+            if (boisson1.getModel().equals("PETIT") ){
                 boisson1.setQuantite((int) (boisson1.getNbreCasier()*24));
             }else {
                 boisson1.setQuantite((int) (boisson1.getNbreCasier()*12));
@@ -81,9 +81,11 @@ public class BoissonController {
             return new ResponseEntity<>(boisson1, HttpStatus.CREATED);
         }else {
             try {
-                if (boisson.getModel() == "PETIT"){
+                if (boisson.getModel().equals("PETIT")){
+                    System.out.println("je suis petit");
                     boisson.setQuantite((int) (boisson.getNbreCasier()*24));
                 }else {
+                    System.out.println("je suis grand");
                     boisson.setQuantite((int) (boisson.getNbreCasier()*12));
                 }
                 boisson.setName(boisson.getName().toUpperCase());
@@ -160,7 +162,7 @@ public class BoissonController {
             _boisson.setPrice(boisson.getPrice());
             _boisson.setModel(boisson.getModel());
             _boisson.setNbreCasier(boisson.getNbreCasier());
-            if (boisson.getModel() == "PETIT"){
+            if (boisson.getModel().equals("PETIT")){
                 _boisson.setQuantite((int) (boisson.getNbreCasier()*24));
             }else {
                 _boisson.setQuantite((int)boisson.getNbreCasier()*12);

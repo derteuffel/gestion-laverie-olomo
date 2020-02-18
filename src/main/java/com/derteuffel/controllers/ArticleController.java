@@ -65,7 +65,7 @@ public class ArticleController {
             }
 
             barRepository.save(bar);
-            if (boisson.getModel() == "PETIT"){
+            if (boisson.getModel().equals("PETIT")){
                 boisson.setNbreCasier(boisson.getQuantite() / 24);
             }else {
                 boisson.setNbreCasier(boisson.getQuantite() / 12);
@@ -92,7 +92,7 @@ public class ArticleController {
             System.out.println("present 2");
             article.setQuantite(article.getQuantite()+1);
             boisson.setQuantite(boisson.getQuantite()-1);
-            if (boisson.getModel() == "PETIT"){
+            if (boisson.getModel().equals("PETIT")){
                 boisson.setNbreCasier(boisson.getQuantite()/24);
             }else {
                 boisson.setNbreCasier(boisson.getQuantite()/12);
@@ -117,7 +117,7 @@ public class ArticleController {
             Boisson boisson = boissonRepository.findByNameAndModel(article.getName(), article.getModel());
             article.setQuantite(article.getQuantite()-1);
             boisson.setQuantite(boisson.getQuantite()+1);
-            if (boisson.getModel() == "PETIT"){
+            if (boisson.getModel().equals("PETIT")){
                 boisson.setNbreCasier(boisson.getQuantite()/24);
             }else {
                 boisson.setNbreCasier(boisson.getQuantite()/12);
