@@ -63,8 +63,7 @@ public class BoissonController {
     }
 
     @PostMapping("/boissons")
-    public ResponseEntity<Boisson> postBoisson(@RequestBody Boisson boisson, @RequestParam("file") MultipartFile file) throws IOException {
-        fileService.storeFile(file);
+    public ResponseEntity<Boisson> postBoisson(@RequestBody Boisson boisson) throws IOException {
         Boisson boisson1 = boissonRepository.findByNameAndModel(boisson.getName().toUpperCase(), boisson.getModel());
         if (boisson1 != null){
             Ajout ajout = new Ajout();
